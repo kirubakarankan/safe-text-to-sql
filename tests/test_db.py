@@ -64,6 +64,20 @@ def test_attach_cannot_create_a_file(conn, tmp_path):
     assert not target.exists()
 
 
+def test_connection_can_be_shared_across_threads(db_path):
+    # LangGraph Studio opens the connection in one thread and runs nodes in others.
+    from concurrent.futures import ThreadPoolExecutor
+
+    conn = connect_read_only(db_path, check_same_thread=False)
+    with ThreadPoolExecutor(max_workers=1) as pool:
+        count = pool.submit(lambda: conn.execute("SELECT COUNT(*) FROM services").fetchone()[0]).result()
+        write = pool.submit(conn.execute, "DELETE FROM services")
+        with pytest.raises(sqlite3.OperationalError):  # still read-only in the other thread
+            write.result()
+    assert count == 6
+    conn.close()
+
+
 def test_runaway_query_is_stopped(db_path):
     conn = connect_read_only(db_path, timeout_seconds=0.5)
     endless = "WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n) SELECT COUNT(*) FROM n"

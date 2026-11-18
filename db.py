@@ -16,10 +16,15 @@ def create_db(path: Path = DEFAULT_DB) -> None:
     conn.close()
 
 
-def connect_read_only(path: Path = DEFAULT_DB, timeout_seconds: float = 2.0) -> sqlite3.Connection:
-    """Open the database so that nothing run on it can change data, even SQL the guard missed."""
+def connect_read_only(
+    path: Path = DEFAULT_DB, timeout_seconds: float = 2.0, check_same_thread: bool = True
+) -> sqlite3.Connection:
+    """Open the database so that nothing run on it can change data, even SQL the guard missed.
+
+    Pass check_same_thread=False when a server opens the connection in one thread and uses it in others.
+    """
     # mode=ro: the file is opened read-only, so writes to real tables fail.
-    conn = sqlite3.connect(f"file:{Path(path).resolve()}?mode=ro", uri=True)
+    conn = sqlite3.connect(f"file:{Path(path).resolve()}?mode=ro", uri=True, check_same_thread=check_same_thread)
     # mode=ro still allows TEMP tables; query_only blocks every write.
     conn.execute("PRAGMA query_only = ON")
     # mode=ro still lets ATTACH create a new file; allow zero attached databases.
