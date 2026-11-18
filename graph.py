@@ -17,12 +17,12 @@ class State(TypedDict, total=False):
     rows: list[tuple]
 
 
-def build_graph(llm, conn: sqlite3.Connection):
+def build_graph(llm, conn: sqlite3.Connection, today: str | None = None):
     """conn must come from db.connect_read_only, the second wall if the guard misses something."""
     schema = read_schema(conn)
 
     def generate(state: State) -> State:
-        return {"sql": write_sql(state["question"], schema, llm)}
+        return {"sql": write_sql(state["question"], schema, llm, today)}
 
     def check(state: State) -> State:
         return {"reason": rejection_reason(state["sql"])}
