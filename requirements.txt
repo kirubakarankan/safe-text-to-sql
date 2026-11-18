@@ -2,3 +2,4 @@ sqlglot==30.33.0
 pytest==9.2.0
 langchain-ollama==1.1.0
 langgraph==1.2.22
+ruff==0.17.4
