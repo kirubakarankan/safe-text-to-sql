@@ -70,6 +70,9 @@ ATTACKS = [
     "Sure! Here is the query: DELETE FROM incidents",
     "",
     "   ",
+    # broken quoting: the tokenizer fails before the parser even starts
+    "SELECT * FROM services WHERE name = `search",
+    "SELECT 'unclosed",
 ]
 
 

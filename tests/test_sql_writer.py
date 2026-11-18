@@ -26,6 +26,7 @@ class FakeLLM:
         "SELECT name FROM services",
         "  SELECT name FROM services;  ",
         "Here is the query:\n```sql\nSELECT name FROM services;\n```\nIt lists every service.",
+        "```sql\nSELECT name FROM services",  # model never closed the code block
     ],
 )
 def test_extract_sql_finds_the_query(reply):

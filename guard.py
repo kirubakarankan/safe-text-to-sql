@@ -16,7 +16,7 @@ def rejection_reason(sql: str) -> str | None:
     """Return why the SQL is refused, or None if it is allowed."""
     try:
         statements = sqlglot.parse(sql, read="sqlite")
-    except sqlglot.errors.ParseError:
+    except sqlglot.errors.SqlglotError:  # ParseError, and TokenError for broken quoting
         return "could not parse SQL"
     if len(statements) != 1:
         return "only one statement is allowed"

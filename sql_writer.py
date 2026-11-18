@@ -8,7 +8,7 @@ Write exactly one read-only SELECT query that answers the question, using only t
 Times are ISO 8601 text in UTC, like '2026-11-12T07:40:00Z'; use SQLite date() and datetime() for date maths.
 Reply with the SQL only, inside a ```sql code block. No explanation."""
 
-FENCED = re.compile(r"```(?:sql)?\s*(.*?)```", re.DOTALL | re.IGNORECASE)
+FENCED = re.compile(r"```(?:sql)?\s*(.*?)(?:```|$)", re.DOTALL | re.IGNORECASE)  # closing fence optional
 
 
 def read_schema(conn) -> str:
